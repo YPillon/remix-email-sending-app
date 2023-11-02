@@ -1,5 +1,6 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
-import Mailjet from "node-mailjet";
+
+import { mailjet } from "../lib/mailjet";
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
@@ -9,11 +10,6 @@ export async function action({ request }: ActionFunctionArgs) {
   const productName = "PDF";
   const documentLink =
     "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
-
-  const mailjet = new Mailjet({
-    apiKey: process.env.MJ_PUBLIC_KEY,
-    apiSecret: process.env.MJ_PRIVATE_KEY,
-  });
 
   const MJRequest = mailjet.post("send", { version: "v3.1" }).request({
     Messages: [
@@ -40,7 +36,7 @@ export async function action({ request }: ActionFunctionArgs) {
     // console.log(result.body);
     return { body: result.body };
   }).catch((error) => {
-    // console.log(error);
+    console.log(error);
     return {
       error: true,
       statusCode: error.statusCode,

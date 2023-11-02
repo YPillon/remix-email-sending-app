@@ -26,7 +26,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="bg-amber-700">
+      <body>
         <Outlet />
         <ScrollRestoration />
         <Scripts />
