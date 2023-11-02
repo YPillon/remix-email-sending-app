@@ -5,9 +5,11 @@ This app is built with :
 - The The node-mailjet npm package (https://www.npmjs.com/package/node-mailjet) which connects to the Mailjet API.
 - TailwindCSS (https://tailwindcss.com/docs/installation)
 
-It basically prompts the user for their email address and send them an email with a link to a dummy PDF.
+It can do two things :
+- Prompting the user for their email address and send them an email with a link to a dummy PDF.
+- Prompting the user for their email address and adding them to a list of subscribers on your Mailjet account.
 
-This project is a self-training to learn how to send emails programatically based on user input.
+This project is a self-training to learn how to manage an email solution programmatically.
 
 Enjoy 🙌
 
