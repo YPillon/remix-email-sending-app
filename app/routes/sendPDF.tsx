@@ -6,8 +6,8 @@ export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const recipientEmail = formData.get("email");
 
-  const senderEmail = "younes.pillon@dixea.com";
-  const productName = "PDF";
+  const senderEmail = process.env.SENDER_EMAIL;
+  const fileTitle = "PDF";
   const documentLink =
     "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
 
@@ -26,7 +26,7 @@ export async function action({ request }: ActionFunctionArgs) {
         ],
         Subject: "Voici le document",
         TextPart: "Cliquez sur le lien pour télécharger le PDF",
-        HTMLPart: `<h3>Vous y êtes presque</h3><p>Cliquez sur le lien en-dessous pour télécharger le ${productName}</p><br/>
+        HTMLPart: `<h3>Vous y êtes presque</h3><p>Cliquez sur le lien en-dessous pour télécharger le ${fileTitle}</p><br/>
           <a href=${documentLink} target="_blank rel="noreferrer">Télécharger maintenant</a>`,
       },
     ],
@@ -34,7 +34,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const data = await MJRequest.then((result: any) => {
     // console.log(result.body);
-    return { body: result.body };
+    return { body: result.body, status: 201 };
   }).catch((error) => {
     console.log(error);
     return {
@@ -44,6 +44,5 @@ export async function action({ request }: ActionFunctionArgs) {
     };
   });
 
-  // console.log("Data : " + data);
   return data;
 }

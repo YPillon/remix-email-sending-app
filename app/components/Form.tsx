@@ -7,19 +7,23 @@ import type { DataObject, FormProps } from "~/lib/type";
 export default function Form(props: FormProps) {
   const fetcher = useFetcher();
   const inputRef = useRef<HTMLInputElement>(null);
+  const isRequestSuccessfulRef = useRef<HTMLSpanElement>(null);
 
   const fetcherData: DataObject = fetcher.data as DataObject;
-  const isSubmittingError: boolean = fetcherData?.error;
-  const providedInput: null | string = fetcherData?.providedInput;
 
   const isSubmitting: boolean = fetcher.state !== "idle";
+  const isRequestSuccessful: boolean = fetcherData?.status === 201;
+  const isSubmittingError: boolean = fetcherData?.error;
+  const providedInput: null | string = fetcherData?.providedInput;
   const isEmailAlreadyExisting: boolean = fetcherData?.statusText
     ? fetcherData.statusText.includes("already exists")
     : false;
 
+  // Empty the input, but if error, reffills it with the provided email address
   useEffect(() => {
     if (isSubmitting && inputRef.current) {
       inputRef.current.value = "";
+      inputRef.current.blur();
     }
     if (
       isSubmittingError &&
@@ -28,8 +32,16 @@ export default function Form(props: FormProps) {
       !isSubmitting
     ) {
       inputRef.current.value = providedInput;
+      inputRef.current.focus();
     }
   }, [isSubmittingError, isSubmitting, providedInput]);
+
+  // Makes the check mark appear
+  useEffect(() => {
+    if (isRequestSuccessful && isRequestSuccessfulRef.current) {
+      isRequestSuccessfulRef.current.style.display = "inline";
+    }
+  });
 
   return (
     <fetcher.Form
@@ -44,14 +56,25 @@ export default function Form(props: FormProps) {
           isSubmittingError ? "text-red-500" : ""
         )}
       >
-        <label htmlFor="email" className="ml-auto">
+        <label htmlFor="email" className="ml-auto relative">
+          <span
+            ref={isRequestSuccessfulRef}
+            className="mx-auto absolute -left-7 hidden"
+          >
+            ✔️
+          </span>
           Email
         </label>
         <input
           ref={inputRef}
           type="text"
           name="email"
-          autoFocus
+          onFocus={() => {
+            // Makes the check mark disappear
+            if (isRequestSuccessfulRef.current) {
+              isRequestSuccessfulRef.current.style.display = "none";
+            }
+          }}
           className={clsx(
             "border-2 border-solid w-1/2 mx-auto rounded-md ml-2 focus:outline focus:outline-3 ",
             isSubmittingError
